@@ -1,0 +1,523 @@
+Kubernetes Interview Questions and Answers
+Last Updated : 17 Oct, 2024
+•	
+•	
+•	
+Kubernetes is a powerful tool that helps automate the deployment, scaling, and management of applications using containers. It’s a favorite for handling complex apps because it makes everything more efficient and scalable. Named after the Greek word for "captain," Kubernetes has become essential in cloud-based applications, used by top companies like Google, Red Hat, and IBM.
+In this interview preparation guide, we have covered the top 40 Kubernetes interview questions and answers, covering key topics like Kubernetes architecture, pods, StatefulSets, monitoring, and deployment strategies. Whether you're a fresher or an experienced pro, these questions will boost your DevOps interview prep!
+Jump to the section you like to read!
+Table of Content
+•	Basic Kubernetes Interview Questions
+•	Intermediate Kubernetes Interview Questions
+•	Advanced Kubernetes Interview Questions
+•	Kubernetes Interview Questions For Experienced
+Preparing for Kubernetes-related DevOps roles requires a solid understanding of its architecture and use cases. The DevOps Engineering - Planning to Production course offers practical examples and interview tips for mastering Kubernetes and other DevOps tools.
+Basic Kubernetes Interview Questions
+What is Kubernetes?
+Kubernetes is an open-source platform designed to automate deploying, scaling, and operating application containers. Originally developed by Google, it has become the standard for managing containerized workloads and services. Kubernetes provides a robust framework for orchestrating containers across a cluster of machines, abstracting away the complexities of managing individual containers and allowing developers to focus on building and deploying applications.
+With Kubernetes, users can define application components, their interdependencies, and scaling policies using declarative configuration files, which Kubernetes then uses to ensure the desired state of the application is maintained.
+1. Explain Kubernetes Architecture.
+Kubernetes is an open-source container deployment and administration platform. It offers container orchestration, container runtime, container-centric infrastructure orchestration, balance of load, self-healing mechanisms, and service discovery. A Kubernetes cluster has several control planes and one or more worker nodes.
+ 
+2. Explain the concept of Container Orchestration.
+Container orchestration is a tool that developers may use anywhere there are containers to automate the life cycle management of the containers. It provides a automatic deployment, scaling, and management of containerized applications so that the developers do not have any worry about that the underlying infrastructure.
+ 
+3. What is a Pod in Kubernetes?
+A cluster of one or more Linux containers makes up a Kubernetes pod, the smallest unit of a Kubernetes application. From the more common scenario of a single container to an advanced use case with numerous tightly coupled containers within a pod, this basic structure allows for an array of designs.
+kubectl get pods -n <namespace-name>
+4. How does Kubernetes handle container scaling?
+To automatically scale the workload to match demand, a Horizontal Pod Autoscaling in Kubernetes updates a workload resource (such a deployment or stateful set). Horizontal scaling indicates that more pods are added in response to an increase in load.
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+name: my-hpa
+spec:
+scaleTargetRef:
+apiVersion: apps/v1
+kind: Deployment # or StatefulSet, or ReplicaSet, depending on your workload
+name: my-deployment
+minReplicas: 3
+maxReplicas: 5
+metrics:
+- type: Resource
+resource:
+name: cpu
+target:
+type: Utilization
+averageUtilization: 65
+5. What is Kubelet?
+Kubelet is an important component of Kubernetes that manages containers within pods on a node. It registers the node with the control plane and provides resource information. Kubelet keeps an eye on container health and responds to problems—lik isnces of pods that contain a containerized application. Deployments can help to efficiently scale the number of replica pods, enable the rollout of updated code in a controlled manner, or roll back to the earlier deployment version if necessary.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+name: my-nginx
+spec:
+selector:
+matchLabels:
+app: nginx
+template:
+metadata:
+labels:
+app: nginx
+spec:
+containers:
+- name: my-nginx
+image: nginx:latest
+resources:
+limits:
+memory: "125Mi"
+cpu: "750m"
+ports:
+- containerPort: 80
+7. Explain the difference between a StatefulSet and a Deployment.
+StatefulSet	Deployment
+A collection of identical stateful pods are handled by the resource is called StatefulSet.	This resource controls identical pods deployment.
+Statefulset helpful in managing stateful applications that need persistent storage with a dependable network ID.	It enables you to control your application's state and ensure that the right number of replicas are always running.
+8. What is a Service in Kubernetes?
+The idea of the Service is to group a set of Pod endpoints into a single resource. We can configure various ways to access the grouping. By default, we can get a stable cluster IP address that the clients inside the cluster can use to contact Pods in Service.
+apiVersion: v1
+kind: Service
+metadata:
+name: my-service
+spec:
+selector:
+Tomcat: deploymentapp
+ports:
+- protocol: TCP
+port: 80
+targetPort: 8080
+9. How does Kubernetes manage configuration?
+Kubernetes employs ConfigMaps and Secrets to manage configuration. ConfigMaps store non-sensitive setup data, while Secrets handles sensitive information like passwords. These resources have different configurations from the application code, making updates easier. ConfigMaps have key-value pairs for different settings that can be accessed as environment variables or mounted files. Sensitive data is securely stored in Secrets, which are applied to the cluster using kubectl. Both ConfigMaps and Secrets are defined in YAML files and applied to the cluster using kubectl. Kubernetes tracks changes in these resources, triggering updates in Pods without needing changes to the application code.
+10. Describe the role of a Master node in Kubernetes.
+Kubernetes master node components can be run within Kubernetes itself, as a set of containers within the dedicated pod. The master node is responsible for cluster management and for providing the API that is used to configure and manage resources within the Kubernetes cluster.
+11. What is the role of the kube-proxy in Kubernetes and how does it facilitate communication between Pods?
+The networking part of Kubernetes that enables communication between pods & services is called Kube-proxy, and it may be installed on any cluster node. Its major function is to maintain network rules for service-to-pod mapping, which provides communication to and from Kubernetes clusters.
+Intermediate Kubernetes Interview Questions
+Here are some Intermediate-Level Kubernetes Interview Questions and Answers to help you prepare for your interviews:
+12. Explain the concept of Ingress in Kubernetes.
+In the following section, we will go across what Kubernetes Ingress is, what an Ingress controller is, how it fixes routing difficulties, and how to implement it step-by-step. Ingress is a Kubernetes API object that is used to expose HTTP and HTTPS routes from outside the cluster to services inside the cluster. It provides a single entry point into a cluster, it allows more straightforward management applications and troubleshooting routing issues.
+ 
+ 
+13. What is a ConfigMap?
+A ConfigMap is an API object in Kubernetes that is primarily used to store non-confidential data. ConfigMaps are a way for Kubernetes to inject configuration data into application pods, making it easier to manage and update configuration settings and assist in separating configuration from application code.
+apiVersion: v1
+kind: Pod
+metadata:
+name: my-pod
+spec:
+containers:
+- name: container-name
+image: image
+volumeMounts:
+- name: volume-name
+mountPath: /etc/configmap
+volumes:
+- name: volume-name
+configMap:
+name: configmap-name
+14. Describe the role of etcd in Kubernetes.
+Etcd is the cluster brain that maintains records of all cluster information, which includes the desired state, the current state, resource configurations, and runtime data. It is the cluster brain that informs other processes that including the Scheduler about changes in the cluster state and availability of resources.
+15. How do rolling updates work in a Deployment?
+The rolling update deployment strategy, additionally referred to as a rolling deployment, makes sure of zero downtime by methodically replacing out of date Pods with updated ones, facilitating a smooth transition during Deployment updates. A rolling deployment is a strategic approach that gradually substitutes older versions of an application with newer ones through an overall replacement of the underlying infrastructure.
+16. What is a Namespace in Kubernetes?
+Namespaces permit Kubernetes clusters to be organized into virtual sub-clusters, which is useful in situations where a cluster is utilized by several teams or projects. Namespaces allow a cluster to be structured in any number of ways, with each namespace providing logical segregation from the others while maintaining the ability to speak across namespaces.
+ 
+17. Explain the use of Labels and Selectors in Kubernetes.
+Labels and Selectors are essential sections in Kubernetes configuration files for deployments and services due to how they link Kubernetes services to pods. Labels are key-value pairs that identify pods distinctly; the deployment assigns these labels and uses them as a starting point for the pod prior to its creation, and the Selector matches these labels. Labels and selectors combine to create connections between deployments, pods, and services in Kubernetes.
+18. Describe the role of a Proxy in Kubernetes.
+One essential Kubernetes agent that exists on every cluster node is called Kube-Proxy. Its primary function is to keep track of modifications made to the Service of objects and the endpoints that correspond to them. It then changes these modifications into actual network rules that are implemented into the node.
+19. What is a Persistent Volume (PV) in Kubernetes?
+A Persistent Volume (PV) in Kubernetes is an object that allows pods to access storage from a defined device. This device is usually described via a Kubernetes StorageClass. When a PVC is created individually, it is generated and designated to the specified storage device. This method wins out over pretreated storage classes because it gives a better understanding of the workflow.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+name: mypv
+spec:
+capacity:
+storage: 2Gi
+accessModes:
+- ReadWriteOnce
+persistentVolumeReclaimPolicy: Retain
+hostPath:
+path: "/mnt/data"
+20. Explain the differences between a DaemonSet and a ReplicaSet.
+ReplicaSet	DaemonSet
+On any node, ReplicaSet will make sure that the number of operating pods in the Kubernetes cluster match the number of pods that is planned.	Every node will have just the minimum of one pod of the application that we deployed because of DaemonSet.
+Replicaset most suitable for applications like web applications which are stateless.	Stateful applications are best fits for it.
+21. How can you achieve communication between Pods in different Nodes?
+Pods in a cluster of k8s can speak to one another by default use the internal IP addresses. The underlying container runtime or network plugin gives a virtual network overlay to this communication.
+22. What advantages does Kubernetes have?
+Kubernetes has the following advantages:
+•	Container Orchestration
+•	Automated Load Balancing
+•	Auto Scaling
+•	Rolling Update & Rollbacks
+•	Service Discovery and Load Balancing
+•	Storage Orchestration
+•	Self-Healing
+•	Secrets and Configuration Management
+•	Multi-Cloud and Hybrid Cloud Support
+•	Role-Based Access Control (RBAC)
+•	Pods and Multi-Container Support
+•	Monitoring and Logging
+Also Read: Fundamental Kubernetes Components
+Advanced Kubernetes Interview Questions
+ Kubernetes Interview Questions and Answers
+23. What is the role of the kube-scheduler in Kubernetes?
+This Kubernetes scheduler, a control plane mechanism, is in charge of assigning Pods to Nodes; it evaluates constraints and readily accessible assets to identify acceptable candidate Nodes for each Pod in the scheduling queue. Kube-scheduler, the default scheduler for Kubernetes, works within the control plane and is intended to provide users with the option to develop and implement their custom scheduling components.
+24. Describe how a Horizontal Pod Autoscaler (HPA) works.
+With a dedicated instance for each workflow, each configured Horizontal Pod Autoscaler works as part of a control loop, automatically changing the workloads' shape to maintain the desired state by periodically contrasting its metrics to the user-configured target thresholds.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+name: webserver-mem-hpa
+spec:
+maxReplicas: 5
+minReplicas: 1
+scaleTargetRef:
+apiVersion: apps/v1
+kind: Deployment
+name: webserver
+metrics:
+- type: Resource
+resource:
+name: memory
+target:
+type: Utilization
+averageValue: 2Mi
+25. Explain the concept of Custom Resources in Kubernetes.
+Following a custom resource is installed, users can create and access its objects using kubectl, just like they do for built-in resources like Pods. A custom resource is an extension of the Kubernetes API that is not always available in a default Kubernetes installation. However, many core Kubernetes functions are now built using custom resources, making Kubernetes more modular. Custom resources can come and go in a running the cluster through dynamic registration, and cluster admins can update custom resources independently of the cluster.
+26. How does Kubernetes handle security and access control?
+Using robust access restrictions and encryption techniques, like Kubernetes Secrets or external key management systems, can help safeguard sensitive data kept within your cluster. To prevent unwanted access, data must be encrypted as it is in transit and at rest.
+27. What is a Network Policy in Kubernetes?
+Kubernetes Network Policies are an application-centric build that let you specify how pod is allowed to communicate with various network "entities" (we use the term "entity" here to avoid over change the more common terms such as "endpoints" and "services", which have specific K8s connotations) over the network. Network Policies apply to the connection with pod on one or both sides, and are not relevant to any other connections.
+ 
+28. Describe the role of a kube-proxy in the cluster.
+Kube-Proxy is an important Kubernetes agent that stays on every cluster node. Its main function is to keep track of adjustments made to Service objects and the endpoints that correspond to them. Based on the changes made, it switches them into concrete network rules on the node.
+29. What is a Helm chart, and how is it used?
+Helm utilizes a packaging format called charts, which are collection of files which describe the cohesive set of Kubernetes resources. Whether you are deploying a simple component, like a memcached pod, or a complex web app stack which involves HTTP servers, databases, caches, and more, all the files you need are contained in a single chart. Helm chart packages provide all the resources you need to deploy an application to a Kubernetes cluster, which involves YAML configuration files for secrets, services, deployments, and config maps that provide the app's desired state.
+30. Explain the concept of Taints and Tolerations in Kubernetes.
+Tolerances, when applied to pods, enable the scheduler to schedule them in the presence of matching taints. However, tolerating a pod does not ensure scheduling, as the scheduler considers other factors when making its decision. Node affinity is a property of Pods that either expresses a preference or sets a hard requirement to attract them to a specific set of nodes. Taints, on the other hand, work as the opposite, allowing a node to repel a specific group of pods.
+apiVersion: v1
+kind: Pod
+metadata:
+name: nginx
+labels:
+env: test
+spec:
+containers:
+- name: nginx
+image: nginx
+imagePullPolicy: IfNotPresent
+tolerations:
+- key: "example-key"
+operator: "Exists"
+effect: "NoSchedule"
+31. How does Kubernetes manage storage orchestration?
+The Container Storage Interface (CSI) is the standard to establish device-independent relationships across block and file storage systems and containerized workloads. In essence, CSI allows storage interfaces to be declared to be implemented by containers.
+32. Describe the use of init containers in Kubernetes.
+This page provides an overview of init containers, which are specialized containers that carry out in front of app containers in a Pod. You can specify init containers in the Pod specification as well as to the containers array (which describes app containers). Init containers can contain utilities or setup scripts that aren't present in an app image. Resource limitations, volumes, and security settings are just a few of the characteristics and functions that app containers support in it containers.
+33. In Kubernetes, what are the various services available?
+Kubernetes supports a number of services, include the following: 1) Cluster IP, 2) Node Port, 3) Load Balancer, & 4) External Name Creation.
+1. Cluster IP Service
+A ClusterIP service in Kubernetes provides a stable virtual IP address (Cluster IP) to the service, allowing internal communication between various parts in the Kubernetes cluster, it exposes a set of Pods within the cluster to other objects in the cluster.
+2. Node Port Service
+A NodePort service in Kubernetes is a type of service that allows a group of Pods accessible to external customers on an allocated port on all cluster nodes.
+3. Load Balancer service
+An external load balancer is automatically provided by a LoadBalancer service in Kubernetes to distribute incoming traffic between the Pods when a group of Pods are accessible to the outside world.
+4. External Name Creation Service
+An ExternalName service in Kubernetes works as an alias which allows pods inside the cluster to contact services outside cluster using a user-defined DNS name. External name provides DNS-based service discovery to map a service to an external DNS name.
+Also Read: Kubernetes - Images
+Kubernetes Interview Questions For Experienced
+34. Explain the concept of a Custom Operator in Kubernetes.
+Utilizing the Kubernetes API, operators automate procedures like application deployment, scaling, and governance, offering a smooth and integrated approach to resource management. Operators usually set up as custom controllers and extend the Kubernetes API with new resources and specialized logic for their management.
+35. Describe the internals of the Kubernetes control plane.
+Worker nodes, pods, and other cluster resources are administered by the Kubernetes control plane. It receives data regarding cluster activity, requests from both internal and external sources, and various other things. Then, it applies this information to move the cluster resources from their current state to the desired state.
+36. What is the purpose of the Kubernetes API server?
+As the front end to the cluster's shared state, the API server manages REST operations and serves as the hub through which all other components communicate. Its main responsibility is to receive and handle HTTP requests in the form of API calls, which come from consumers or other Kubernetes system components. The Kubernetes API server is crucial to the validation as well as the configuration of data for different API objects, including pods, services, replication controllers, and more.
+37. How does Kubernetes handle rolling back deployments?
+In Kubernetes, you can roll back a deployment using the `kubectl rollout} command. This command provides an array of options to control rollbacks, like `kubectl rollout undo`, which flips back the current deployment to the previous revision. You can also use the `--to-revision} flag to specify a specific revision.
+kubectl rollout undo deployment <deployment-name>
+kubectl rollout undo deployment <deployment-name> --to-revision=<revision-number>
+38. Explain the concept of Pod Disruption Budgets.
+It is intended for application owners who want to build highly available applications and also serves as a guide for cluster administrators who are building automated cluster actions such as autoscaling and upgrades. Pod disruption budgets, or PDBs for short, are policies that specify the desired state of the cluster and the orchestrators' attempt to maintain it. For PDBs, this consists of defining a maximum quantity of failed pods or the lowest number of pod replicas that must stay in the cluster at any given time.
+39. What is the role of the kube-controller-manager?
+As a daemon, the Kubernetes controller manager incorporates all of the basic control loops that make up Kubernetes. A control loop in robotics and automation is an ongoing mechanism that manages the state of the system. In Kubernetes, a controller is a control loop that keeps an eye on the cluster's shared state through the api server and makes modifications to bring the current state into line with the desired state. Some of the controllers that come packaged with Kubernetes are the replication controller, endpoints controller, namespace controller, and service accounts controller.
+40. Describe the role of kube-apiserver in the Kubernetes architecture.
+The frontend to the cluster's shared state which all other components interact with is the Kubernetes API server. It handles REST operations, validation of data and configuration of various API objects like pods, services, and replication controllers, and provides an encompassing interface for managing the cluster's overall state and allowing communication with all components.
+41. How does Kubernetes handle node failures and resiliency?
+Whenever a node fails or a container becomes hazardous, Kubernetes makes sure that a sufficient amount of replicas is maintained by launching new replicas on numerous servers, which maintains continuous availability.
+Here are some key mechanisms and strategies that Kubernetes employs:
+•	Node Health Monitoring
+•	Pod Restart Policies
+•	Replication and Desired State
+•	Pod Disruption Budgets
+•	Node Pools and Multi-Cloud Deployments
+42. Explain how to set up and use Role-Based Access Control (RBAC) in Kubernetes.
+Initially choose a few broad user categories and the degree of access that each one needs. These choices will be based on the method of authentication you decide as well as the demands of your organization. After you have made the decisions, you can set up role bindings for every group of user.
+ 
+43. What is the role of the Cloud Controller Manager in a cloud-based Kubernetes cluster?
+The cloud-controller-manager, a crucial Kubernetes control plane component, encapsulates cloud-specific control logic. This manager facilitates the integration of your cluster with the API of your cloud provider, effectively segregating components that interact with the cloud platform from those that solely interact with the Kubernetes cluster. As part of its capabilities, the cloud controller manager regulates the Node controller, which is in charge of tasks like removing deleted Kubernetes nodes from the cloud environment and setting up cloud infrastructure technologies.
+44. Describe a few important Kubectl commands.
+The following are important Kubectl commands:
+•	kubectl api-resources
+•	kubectl autoscale
+•	kubectl annotate
+•	kubectl cluster-info
+•	kubectl attach
+•	kubectl apply
+•	kubectl update
+•	kubectl edit
+•	kubectl config set
+•	kubectl config
+•	kubectl config current-context.
+45. What is Helm of Kubernetes?
+Helm is a package manager for Kubernetes that makes application deployment and management more simple. By providing a templating system, parameterization, and versioning for Kubernetes manifests, Helm increases deployment process and makes it possible to define, install, and upgrade even the most complex Kubernetes applications using the pre-configured packages called "charts."
+Helm's main features are as follows:
+•	Charts
+•	Templating
+•	Repositories
+•	Reusability
+•	Parameterization
+•	Dependency Management
+•	Release Management
+Other Important Topics Related To Kubernetes For Interview
+Below is a table for the important topics related to Kubernetes that are important for interviews:
+Topic	Description
+1. Kubernetes	An open-source container orchestration tool/system used for automating tasks like management, monitoring, scaling, and deployment of containerized applications.
+2. K8s	Another term for Kubernetes.
+3. Orchestration	Integration of multiple services to automate processes or synchronize information. In the context of Kubernetes, orchestration ensures seamless communication among individual containers.
+4. Architecture	Understanding Kubernetes components: master node, worker nodes, etcd, API server, controller manager, and scheduler.
+5. Pods	The basic unit in Kubernetes, containing one or more containers.
+6. Services	Exposing pods to the network. Types: ClusterIP, NodePort, Load Balancer, and ExternalName.
+7. Replication Controllers	Ensuring a specified number of replicas of a pod are running.
+8. Deployments	Managing rolling updates and rollbacks.
+9. ConfigMaps and Secrets	Managing configuration data and sensitive information.
+10. Persistent Volumes (PVs) and Persistent Volume Claims (PVCs)	Managing storage for stateful applications.
+11. Ingress Controllers	Routing external traffic to services within the cluster.
+12. Helm	Package manager for Kubernetes.
+13. Security	RBAC, Network Policies, and Pod Security Policies.
+14. Monitoring and Logging	Prometheus, Grafana, and ELK stack.
+15. Troubleshooting	Diagnosing issues with pods, services, and nodes.
+ 
+Are you ready to unleash the power of DevOps to streamline your Software Development and Deployment? Learn about our DevOps Live Course at GeeksforGeeks, created for all professionals in practice with continuous integration, delivery, and deployment. Learn about leading tools, industry best practices, and techniques for automation through an interactive session with hands-on live projects. Whether you are new to DevOps or looking to improve your skills, this course equips you with everything needed to streamline workflows and deliver excellent quality software in the least amount of time. Learn to take your skills in DevOps to the next level now, and harness the power of streamlined software development!
+
+
+P
+
+prasadthoavoa
+ Follow
+ 
+3
+Previous Article
+KPIT Interview Experience for Associate Engineer (On-Campus)
+Next Article
+Similar Reads
+
+Kubernetes - Creating Deployment and Services using Helm in Kubernetes
+Prerequisite: Kubernetes Helm is used for managing your Kubernetes Deployment. With helm, we can tear down and create a deployment with a single command. we will be creating deployment and services using Helm in Kubernetes. For simplicity, we will be using the nginx image. Deployment of nginx using HelmStep 1: We need to install the Helm. You can i
+4 min read
+
+Kubernetes - Monolithic Architecture of Kubernetes
+There is a new way of developing software apps using a microservices architecture. That's when all the buzz around containers and container orchestration has increased but we have been developing and using these large software apps even before most of us were born. So in this article, we will be discussing what is that old software architecture we
+7 min read
+
+Why Kubernetes? Benefits of using Kubernetes
+The popularity of container orchestration technologies specially Kubernetes comes from its use cases and the problems that it solves. Kubernetes is the most popular container orchestration and is widely used by Cloud Native Computing Foundation (CNCF), the foundation to which Kubernetes as a project was donated by Google, estimates that about 92% b
+8 min read
+
+
+Kubernetes Controller VS Kubernetes Operator
+Kubernetes Controllers are ideal for managing stateless apps and maintaining the correct number of copies, but Kubernetes Operators are more appropriate for complicated, stateful applications that require human-like decision-making abilities. Kubernetes ControllerKubernetes Controllers are ideal for managing stateless apps and maintaining the corre
+4 min read
+
+Active Directory Interview Questions - Top 50+ Questions and Answers for 2024
+Active Directory (AD) is a crucial component of modern enterprise IT infrastructure, providing centralized authentication, authorization, and directory services for Windows-based networks. As organizations continue to rely heavily on AD for managing user identities, access controls, and network resources, the demand for skilled AD administrators an
+15+ min read
+
+Teacher Interview Questions - Top 70 Questions and Answers for 2024
+Teaching is a noble profession that requires a unique blend of knowledge, skills, and passion. As educators, teachers play a crucial role in shaping the minds of future generations, fostering critical thinking, and nurturing the potential of each student. In today's rapidly evolving educational landscape, teachers must be prepared to meet diverse c
+15+ min read
+
+Top 50 Blockchain Interview Questions and Answers
+Blockchain is one of the most trending technologies out there in the tech world. It is basically concerned with a distributed database that maintains the records of all transactions that have been executed and shared across the network of computer systems globally. From payment processing to healthcare to supply chain and logistics monitoring - Blo
+15+ min read
+
+
+Merge Sort Interview Questions and Answers
+Merge sort is defined as a sorting algorithm that works by dividing an array into smaller subarrays, sorting each subarray, and then merging the sorted subarrays back together to form the final sorted array. Let us discuss some of the interview questions asked about Merge Sort: 1. Is Merge sort In Place?No, Merge sort is not an in place algorithm.
+4 min read
+
+Deloitte Interview Questions and Answers for Technical Profiles
+Deloitte is a leading global professional services firm with over 345,000 employees in more than 150 countries. The company offers a variety of technical roles in areas such as software engineering, data science, and IT infrastructure. When preparing for a technical interview at Deloitte, it's important to be ready for challenging questions. To inc
+13 min read
+
+ION Group Interview Questions and Answers for Technical Profiles
+ION Group is a global technology leader, providing innovative solutions for digital transformation and delivering cutting-edge services for businesses optimizing their online operations. ION Group offers a variety of technical roles in areas such as software engineering, data science, and IT infrastructure. ION Group interviews for technical profil
+12 min read
+
+KPMG Interview Questions and Answers for Technical Profiles
+KPMG is one of the Big Four accounting firms, and it offers a variety of technical roles in areas such as auditing, tax, consulting, and technology. KPMG interviews for technical profiles can be challenging, but with the right preparation, you can increase your chances of success. This article provides a comprehensive list of common technical inter
+15+ min read
+
+Nvidia Interview Questions and Answers for Technical Profiles
+Nvidia Corporation, an American technology company based in Santa Clara, California, is a leading designer of graphics processing units (GPUs) for the gaming, cryptocurrency, and professional markets. It also designs system-on-a-chip (SoC) units for the mobile computing and automotive markets. If you're interviewing for a technical role at Nvidia,
+14 min read
+
+Qualcomm Interview Questions and Answers for Technical Profiles
+Qualcomm is an American multinational semiconductor and telecommunications equipment company that designs and markets wireless telecommunications products and services. It is one of the leading providers of mobile chips and a major player in the 5G market. If you're interviewing for a technical role at Qualcomm, it's important to be prepared for a
+15+ min read
+
+Siemens Interview Questions and Answers for Technical Profiles
+In this article we prepare for your Siemens technical interview with our comprehensive list of interview questions and expertly crafted answers. Here in this article, we listed a few popular questions and answers that have been asked in the Siemens for Technical Profiles. Siemens concentrated on business, transportation, infrastructure, and healthc
+15 min read
+
+IT Auditor Interview Questions and Answers
+"Unlocking Your IT Auditor Career" is your one-stop guide to ace interviews. We've compiled a list of 30 crucial interview questions in this helpful piece, covering everything from the fundamentals to the trickier facets of IT auditing. Recognize the fundamentals of IT auditing, the significance of this discipline in today's corporate environment,
+15+ min read
+
+BNY Mellon Interview Questions and Answers for Technical Profiles
+BNY Mellon is a huge financial company that operates all over the world and has more than 50,000 employees. They have various technical job openings in areas like software development, data analysis, and IT systems. When you have a technical job interview at BNY Mellon, it can be tough, but if you prepare well, you can improve your chances of doing
+12 min read
+
+Tiger Analytics Interview Questions and Answers for Technical Profiles
+Think globally, and impact millions. That's the driving force behind Tiger Analytics, a data-driven powerhouse leading the AI and analytics consulting world. Tiger Analytics tackles challenges that resonate across the globe, shaping the lives of millions through innovative data-driven solutions. More than just a company, Tiger Analytics fosters a c
+15 min read
+
+Site Reliability Engineering(SRE) Interview Questions and Answers
+SRE, or Site Reliability Engineering, is a rapidly growing field that is essential for ensuring the smooth operation of large-scale systems. SREs are responsible for designing, building, and maintaining the infrastructure that keeps these systems up and running 24/7. As a result, there is a high demand for qualified SREs, and the competition for SR
+13 min read
+
+Delta X Interview Questions and Answers
+Aspiring software engineers seeking to crack the code of success at DeltaX, buckle up! This article dissects the interviews at DeltaX, offering an exclusive guide to the frequently asked questions across key technical areas: Data Structures and algorithms (DSA), Database Management Systems (DBMS), Object-Oriented Programming (OOP), Computer Network
+5 min read
+
+SDET Interview Questions and Answers
+A Software Development Engineer in Testing (SDET) is a programmer primarily responsible for developing software and writing and tooling to test that product. That means it's an IT professional who can work effectively in development and testing roles. SDET (Software Engineer Testing) deals with the whole process of software development, mainly we c
+15+ min read
+
+Article Tags :
+•	Kubernetes
+•	DevOps
+•	Interview Questions
+•	Kubernetes-Basics
++2 More
+ 
+ 
+Corporate & Communications Address:- A-143, 9th Floor, Sovereign Corporate Tower, Sector- 136, Noida, Uttar Pradesh (201305) | Registered Address:- K 061, Tower K, Gulshan Vivante Apartment, Sector 137, Noida, Gautam Buddh Nagar, Uttar Pradesh, 201305
+
+
+
+
+
+
+  
+•	Company
+•	About Us
+•	Legal
+•	In Media
+•	Contact Us
+•	Advertise with us
+•	GFG Corporate Solution
+•	Placement Training Program
+•	GeeksforGeeks Community
+•	Languages
+•	Python
+•	Java
+•	C++
+•	PHP
+•	GoLang
+•	SQL
+•	R Language
+•	Android Tutorial
+•	Tutorials Archive
+•	DSA
+•	Data Structures
+•	Algorithms
+•	DSA for Beginners
+•	Basic DSA Problems
+•	DSA Roadmap
+•	Top 100 DSA Interview Problems
+•	DSA Roadmap by Sandeep Jain
+•	All Cheat Sheets
+•	Data Science & ML
+•	Data Science With Python
+•	Data Science For Beginner
+•	Machine Learning
+•	ML Maths
+•	Data Visualisation
+•	Pandas
+•	NumPy
+•	NLP
+•	Deep Learning
+•	Web Technologies
+•	HTML
+•	CSS
+•	JavaScript
+•	TypeScript
+•	ReactJS
+•	NextJS
+•	Bootstrap
+•	Web Design
+•	Python Tutorial
+•	Python Programming Examples
+•	Python Projects
+•	Python Tkinter
+•	Web Scraping
+•	OpenCV Tutorial
+•	Python Interview Question
+•	Django
+•	Computer Science
+•	Operating Systems
+•	Computer Network
+•	Database Management System
+•	Software Engineering
+•	Digital Logic Design
+•	Engineering Maths
+•	Software Development
+•	Software Testing
+•	DevOps
+•	Git
+•	Linux
+•	AWS
+•	Docker
+•	Kubernetes
+•	Azure
+•	GCP
+•	DevOps Roadmap
+•	System Design
+•	High Level Design
+•	Low Level Design
+•	UML Diagrams
+•	Interview Guide
+•	Design Patterns
+•	OOAD
+•	System Design Bootcamp
+•	Interview Questions
+•	Inteview Preparation
+•	Competitive Programming
+•	Top DS or Algo for CP
+•	Company-Wise Recruitment Process
+•	Company-Wise Preparation
+•	Aptitude Preparation
+•	Puzzles
+•	School Subjects
+•	Mathematics
+•	Physics
+•	Chemistry
+•	Biology
+•	Social Science
+•	English Grammar
+•	Commerce
+•	World GK
+•	GeeksforGeeks Videos
+•	DSA
+•	Python
+•	Java
+•	C++
+•	Web Development
+•	Data Science
+•	CS Subjects
+@GeeksforGeeks, Sanchhaya Education Private Limited, All rights reserved
+
+
